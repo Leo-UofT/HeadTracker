@@ -3,12 +3,12 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QDesktopServices>
-#include <qosc.h>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "servominmax.h"
 #include "ucrc16lib.h"
+#include "QOsc/include/qosc.h"
 
 
 //#define DEBUG_HT
