@@ -40,6 +40,7 @@ unix {
 } else {
     SOURCES += $$PWD/libs/oscpack/ip/win32/NetworkingUtils.cpp
     SOURCES += $$PWD/libs/oscpack/ip/win32/UdpSocket.cpp
+    LIBS += -lws2_32
 }
                          
 SOURCES += $$PWD/libs/oscpack/ip/IpEndpointName.cpp
