@@ -963,10 +963,10 @@ void MainWindow::offOrientChanged(float t,float r,float p)
     ui->lblPanValue->setText(QString::number(p,'f',1) + "°");
 
     QOSCMessage *message = new QOSCMessage("/ypr");
-    message->addFloat(p);
-    message->addFloat(t);
-    message->addFloat(r);
-    oscSender->send(message);
+    message->addFloat(-p);
+    message->addFloat(-t);
+    message->addFloat(-r);
+    oscSender->send(message, false);
 
 }
 
