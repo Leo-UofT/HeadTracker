@@ -49,12 +49,12 @@ SOURCES += \
     signalbars.cpp \
     trackersettings.cpp \
     ucrc16lib.cpp \
-    QOsc/qosc_global.cpp \
-    QOsc/qoscbundle.cpp \
-    QOsc/qoscinterface.cpp \
-    QOsc/qoscmessage.cpp \
-    QOsc/qoscmethod.cpp \
-    QOsc/qoscvalue.cpp
+    QOsc/src/qosc_global.cpp \
+    QOsc/src/qoscbundle.cpp \
+    QOsc/src/qoscinterface.cpp \
+    QOsc/src/qoscmessage.cpp \
+    QOsc/src/qoscmethod.cpp \
+    QOsc/src/qoscvalue.cpp
     
 
 
@@ -82,9 +82,9 @@ HEADERS += \
     trackersettings.h \
     ucrc16lib.h \
     basetrackersettings.h \
-    QOsc/qoscbundle_p.h \
-    QOsc/qoscmessage_p.h \
-    QOsc/qoscvalue_p.h
+    QOsc/src/qoscbundle_p.h \
+    QOsc/src/qoscmessage_p.h \
+    QOsc/src/qoscvalue_p.h
 
 FORMS += \
     calibrateble.ui \
