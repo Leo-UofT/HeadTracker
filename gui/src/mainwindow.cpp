@@ -248,7 +248,7 @@ MainWindow::MainWindow(QWidget *parent)
     serialDisconnect();
 
     QOscInterface iface;
-    iface.setRemoteAddr(QHostAddress("127.0.0.1"));
+    iface.setRemoteAddr("127.0.0.1");
     iface.setRemotePort(9000);
     iface.setLocalPort(8000);
 
