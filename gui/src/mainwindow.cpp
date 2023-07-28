@@ -962,10 +962,10 @@ void MainWindow::offOrientChanged(float t,float r,float p)
     ui->lblRollValue->setText(QString::number(r,'f',1) + "°");
     ui->lblPanValue->setText(QString::number(p,'f',1) + "°");
 
-    QOSCMessage *message = new QOSCMessage("/spinBox");
+    QOSCMessage *message = new QOSCMessage("/ypr");
+    message->addFloat(p);
     message->addFloat(t);
     message->addFloat(r);
-    message->addFloat(p);
     oscSender->send(message);
 
 }
