@@ -246,6 +246,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Called to initalize GUI state to disconnected
     serialDisconnect();
+
+    QOscInterface iface;
+    iface.setRemoteAddr(QHostAddress("127.0.0.1"));
+    iface.setRemotePort(9000);
+    iface.setLocalPort(8000);
+
+    // Craft the message you want to send
+    QOscMessage msg("/my/osc/pattern", QString("Some random string"));
+
+    iface.send(msg);
 }
 
 MainWindow::~MainWindow()
