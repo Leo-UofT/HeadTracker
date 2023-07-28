@@ -52,6 +52,12 @@ typedef unsigned __int64 uint64;
 typedef long int64;
 typedef unsigned long uint64;
 
+#elif defined(__WIN32__) || defined(WIN32) || defined(_WIN32)
+
+#include <stdint.h>
+typedef int64_t int64;
+typedef uint64_t uint64;
+
 #else
 
 typedef long long int64;
