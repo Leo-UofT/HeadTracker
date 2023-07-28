@@ -55,15 +55,15 @@ jobs:
           pip install --upgrade platformio
 
       # Runs a single command using the runners shell
-      - name: Build Firmware Nano 33 BLE
-        run: |
-          cd /src/firmware/src
-          pio run -e Head_Tracker-Nano33_BLE
+      # - name: Build Firmware Nano 33 BLE
+      #   run: |
+      #     cd /src/firmware/src
+      #     pio run -e Head_Tracker-Nano33_BLE
 
-      - name: Build Firmware DTQSYS Ht
-        run: |
-          cd /src/firmware/src
-          pio run -e Head_Tracker-DTQSys
+      # - name: Build Firmware DTQSYS Ht
+      #   run: |
+      #     cd /src/firmware/src
+      #     pio run -e Head_Tracker-DTQSys
 
       - name: Build Firmware Arduino Nano 33 BLE Sense Rev 2
         run: |
