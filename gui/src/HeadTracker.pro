@@ -17,8 +17,6 @@ DEFINES += GIT_VERSION_TAG=$$system($$quote(git describe --tags --abbrev=0))
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += QOsc/include
-
 SOURCES += \
     boardbno055.cpp \
     boardjson.cpp \
@@ -48,13 +46,7 @@ SOURCES += \
     servominmax.cpp \
     signalbars.cpp \
     trackersettings.cpp \
-    ucrc16lib.cpp \
-    QOsc/src/qosc_global.cpp \
-    QOsc/src/qoscbundle.cpp \
-    QOsc/src/qoscinterface.cpp \
-    QOsc/src/qoscmessage.cpp \
-    QOsc/src/qoscmethod.cpp \
-    QOsc/src/qoscvalue.cpp
+    ucrc16lib.cpp
     
 
 
@@ -81,10 +73,7 @@ HEADERS += \
     signalbars.h \
     trackersettings.h \
     ucrc16lib.h \
-    basetrackersettings.h \
-    QOsc/src/qoscbundle_p.h \
-    QOsc/src/qoscmessage_p.h \
-    QOsc/src/qoscvalue_p.h
+    basetrackersettings.h
 
 FORMS += \
     calibrateble.ui \
@@ -94,6 +83,9 @@ FORMS += \
     diagnosticdisplay.ui \
     firmwarewizard.ui \
     mainwindow.ui
+
+
+include(QOSC/QOSC.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

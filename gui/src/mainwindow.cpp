@@ -8,7 +8,6 @@
 #include "ui_mainwindow.h"
 #include "servominmax.h"
 #include "ucrc16lib.h"
-#include "QOsc/include/qosc.h"
 
 
 //#define DEBUG_HT
@@ -16,6 +15,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , oscSender(new QOSCSender("127.0.0.1", 8000, this))
 {
     ui->setupUi(this);
     waitingOnParameters = false;
@@ -245,16 +245,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Called to initalize GUI state to disconnected
     serialDisconnect();
-
-    QOscInterface iface;
-    iface.setRemoteAddr("127.0.0.1");
-    iface.setRemotePort(9000);
-    iface.setLocalPort(8000);
-
-    // Craft the message you want to send
-    QOscMessage msg("/my/osc/pattern", QString("Some random string"));
-
-    iface.send(msg);
 }
 
 MainWindow::~MainWindow()
@@ -971,6 +961,12 @@ void MainWindow::offOrientChanged(float t,float r,float p)
     ui->lblTiltValue->setText(QString::number(t,'f',1) + "°");
     ui->lblRollValue->setText(QString::number(r,'f',1) + "°");
     ui->lblPanValue->setText(QString::number(p,'f',1) + "°");
+
+    QOSCMessage *message = new QOSCMessage("/spinBox");
+    message->addFloat(t);
+    message->addFloat(r);
+    message->addFloat(p);
+    oscSender->send(message);
 
 }
 

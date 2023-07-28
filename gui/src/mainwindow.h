@@ -20,6 +20,7 @@
 #include "boardjson.h"
 #include "boardbno055.h"
 #include "imageviewer/imageviewer.h"
+#include "qoscsender.h"
 
 #ifndef GIT_CURRENT_SHA
 #define GIT_CURRENT_SHA "SHA Unknown"
@@ -79,6 +80,7 @@ private:
     QTimer requestParamsTimer;
     bool waitingOnParameters;
     int boardRequestIndex;
+    QOSCSender *oscSender;
 
     QString logd;    
     FirmwareWizard *firmwareWizard;
