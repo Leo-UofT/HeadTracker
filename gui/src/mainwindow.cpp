@@ -3,7 +3,6 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QDesktopServices>
-#include <QApplication>
 #include <qosc.h>
 
 #include "mainwindow.h"

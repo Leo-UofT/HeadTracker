@@ -17,9 +17,7 @@ DEFINES += GIT_VERSION_TAG=$$system($$quote(git describe --tags --abbrev=0))
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += 3rdparty/QOsc/include
-
-LIBS += -L"3rdparty/QOsc/lib" -lQOsc
+INCLUDEPATH += QOsc/include
 
 SOURCES += \
     boardbno055.cpp \
@@ -50,7 +48,14 @@ SOURCES += \
     servominmax.cpp \
     signalbars.cpp \
     trackersettings.cpp \
-    ucrc16lib.cpp
+    ucrc16lib.cpp \
+    QOsc/qosc_global.cpp \
+    QOsc/qoscbundle.cpp \
+    QOsc/qoscinterface.cpp \
+    QOsc/qoscmessage.cpp \
+    QOsc/qoscmethod.cpp \
+    QOsc/qoscvalue.cpp
+    
 
 
 HEADERS += \
@@ -76,7 +81,10 @@ HEADERS += \
     signalbars.h \
     trackersettings.h \
     ucrc16lib.h \
-    basetrackersettings.h
+    basetrackersettings.h \
+    QOsc/qoscbundle_p.h \
+    QOsc/qoscmessage_p.h \
+    QOsc/qoscvalue_p.h
 
 FORMS += \
     calibrateble.ui \
