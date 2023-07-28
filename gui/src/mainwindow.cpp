@@ -3,6 +3,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QDesktopServices>
+#include <QApplication>
+#include <qosc.h>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -960,6 +962,7 @@ void MainWindow::offOrientChanged(float t,float r,float p)
     ui->lblTiltValue->setText(QString::number(t,'f',1) + "°");
     ui->lblRollValue->setText(QString::number(r,'f',1) + "°");
     ui->lblPanValue->setText(QString::number(p,'f',1) + "°");
+
 }
 
 void MainWindow::ppmOutChanged(int t,int r,int p)

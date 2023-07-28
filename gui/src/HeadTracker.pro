@@ -17,6 +17,10 @@ DEFINES += GIT_VERSION_TAG=$$system($$quote(git describe --tags --abbrev=0))
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH += 3rdparty/QOsc/include
+
+LIBS += -L"3rdparty/QOsc/lib" -lQOsc
+
 SOURCES += \
     boardbno055.cpp \
     boardjson.cpp \
