@@ -33,7 +33,7 @@
 // Thread Periods
 #define IO_PERIOD 25           // (ms) IO Period (button reading)
 #define BT_PERIOD 12500        // (us) Bluetooth update rate
-#define SERIAL_PERIOD 4       // (ms) Serial processing
+#define SERIAL_PERIOD 5       // (ms) Serial processing
 #define DATA_PERIOD 1          // Multiplier of Serial Period (Live Data Transmission Speed)
 #define SENSOR_PERIOD 4000     // (us) Sensor Reads
 #define CALCULATE_PERIOD 7000  // (us) Channel Calculations

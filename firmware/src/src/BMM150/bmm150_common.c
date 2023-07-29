@@ -206,7 +206,7 @@ int8_t set_config(struct bmm150_dev *dev)
 
     if (rslt == BMM150_OK)
     {
-        settings.preset_mode = BMM150_PRESETMODE_LOWPOWER;
+        settings.preset_mode = BMM150_PRESETMODE_ENHANCED;
         rslt = bmm150_set_presetmode(&settings, dev);
         bmm150_error_codes_print_result("bmm150_set_presetmode", rslt);
 
