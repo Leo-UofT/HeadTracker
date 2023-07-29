@@ -200,7 +200,7 @@ int8_t set_config(struct bmm150_dev *dev)
     struct bmm150_settings settings;
 
     /* Set powermode as normal mode */
-    settings.pwr_mode = BMM150_POWERMODE_NORMAL;
+    settings.pwr_mode = BMM150_PRESETMODE_LOWPOWER;
     rslt = bmm150_set_op_mode(&settings, dev);
     bmm150_error_codes_print_result("bmm150_set_op_mode", rslt);
 

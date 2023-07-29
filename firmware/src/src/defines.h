@@ -35,8 +35,8 @@
 #define BT_PERIOD 12500        // (us) Bluetooth update rate
 #define SERIAL_PERIOD 5       // (ms) Serial processing
 #define DATA_PERIOD 1          // Multiplier of Serial Period (Live Data Transmission Speed)
-#define SENSOR_PERIOD 4000     // (us) Sensor Reads
-#define CALCULATE_PERIOD 7000  // (us) Channel Calculations
+#define SENSOR_PERIOD 1000     // (us) Sensor Reads
+#define CALCULATE_PERIOD 2000  // (us) Channel Calculations
 #define UART_PERIOD 4000       // (us) Update rate of UART
 #define PWM_FREQUENCY 50       // (ms) PWM Period
 #define PAUSE_BEFORE_FLASH 60  // (ms) Time to pause all threads before Flash writing
