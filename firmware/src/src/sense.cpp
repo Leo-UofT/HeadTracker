@@ -1055,15 +1055,15 @@ void gyroCalibrate()
       k_mutex_unlock(&data_mutex);
 
       // Check if they differ from the flash values and save if out of range
-      // if(fabs(gyrxoff - filt_gyrx) > GYRO_FLASH_IF_OFFSET ||
-      //    fabs(gyryoff - filt_gyry) > GYRO_FLASH_IF_OFFSET ||
-      //    fabs(gyrzoff - filt_gyrz) > GYRO_FLASH_IF_OFFSET) {
-      //   if (!sent_gyro_cal_msg) {
-      //     k_sem_give(&saveToFlash_sem);
-      //     LOGW("Gyro calibration differs from saved value. Updating flash, x=%.3f,y=%.3f,z=%.3f", filt_gyrx, filt_gyry, filt_gyrz);
-      //     sent_gyro_cal_msg = true;
-      //   }
-      // }
+      if(fabs(gyrxoff - filt_gyrx) > GYRO_FLASH_IF_OFFSET ||
+         fabs(gyryoff - filt_gyry) > GYRO_FLASH_IF_OFFSET ||
+         fabs(gyrzoff - filt_gyrz) > GYRO_FLASH_IF_OFFSET) {
+        if (!sent_gyro_cal_msg) {
+          k_sem_give(&saveToFlash_sem);
+          LOGW("Gyro calibration differs from saved value. Updating flash, x=%.3f,y=%.3f,z=%.3f", filt_gyrx, filt_gyry, filt_gyrz);
+          sent_gyro_cal_msg = true;
+        }
+      }
       filter_samples++;
     }
   } else {
