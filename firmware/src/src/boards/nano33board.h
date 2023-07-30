@@ -99,5 +99,5 @@ const int dpintoenum[] = {0,  0, IO_D2, IO_D3, IO_D4, IO_D5, IO_D6, IO_D7, IO_D8
 #define D_TO_ENUM(x) (dpintoenum[x])
 
 // Values below were determined by plotting Gyro Output (See sense.cpp, gyroCalibration())
-#define GYRO_STABLE_DIFF 0.5f
-#define ACC_STABLE_DIFF 0.05f
+#define GYRO_STABLE_DIFF 0.2f
+#define ACC_STABLE_DIFF 0.01f
