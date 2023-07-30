@@ -15,6 +15,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , oscSender(new QOSCSender("127.0.0.1", 8000, this))
 {
     ui->setupUi(this);
     waitingOnParameters = false;
@@ -960,6 +961,13 @@ void MainWindow::offOrientChanged(float t,float r,float p)
     ui->lblTiltValue->setText(QString::number(t,'f',1) + "°");
     ui->lblRollValue->setText(QString::number(r,'f',1) + "°");
     ui->lblPanValue->setText(QString::number(p,'f',1) + "°");
+
+    QOSCMessage *message = new QOSCMessage("/ypr");
+    message->addFloat(-p);
+    message->addFloat(-t);
+    message->addFloat(-r);
+    oscSender->send(message, false);
+
 }
 
 void MainWindow::ppmOutChanged(int t,int r,int p)

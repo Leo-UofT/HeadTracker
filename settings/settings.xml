@@ -675,7 +675,7 @@
       <name>SbRate</name>
       <discription>SBUS Transmit Freqency</discription>
       <type>u8</type>
-      <default>80</default>
+      <default>140</default>
       <maximum>140</maximum>
    </setting>
    <setting>

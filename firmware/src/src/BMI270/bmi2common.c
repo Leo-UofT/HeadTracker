@@ -420,7 +420,7 @@ int8_t set_accel_gyro_config(struct bmi2_dev *bmi2_dev)
      * Note2 : A higher number of averaged samples will result in a lower noise level of the signal,
      * but this has an adverse effect on the power consumed.
      */
-    config[ACCEL].cfg.acc.bwp = BMI2_ACC_NORMAL_AVG4;
+    config[ACCEL].cfg.acc.bwp = BMI2_ACC_CIC_AVG8;
 
     /* Enable the filter performance mode where averaging of samples
      * will be done based on above set bandwidth and ODR.
@@ -436,7 +436,7 @@ int8_t set_accel_gyro_config(struct bmi2_dev *bmi2_dev)
     config[GYRO].cfg.gyr.odr = BMI2_GYR_ODR_200HZ;
 
     /* Gyroscope Angular Rate Measurement Range.By default the range is 2000dps. */
-    config[GYRO].cfg.gyr.range = BMI2_GYR_RANGE_2000;
+    config[GYRO].cfg.gyr.range = BMI2_GYR_RANGE_500;
 
     /* Gyroscope bandwidth parameters. By default the gyro bandwidth is in normal mode. */
     config[GYRO].cfg.gyr.bwp = BMI2_GYR_NORMAL_MODE;
@@ -446,7 +446,7 @@ int8_t set_accel_gyro_config(struct bmi2_dev *bmi2_dev)
      *  0 -> Ultra low power mode(Default)
      *  1 -> High performance mode
      */
-    config[GYRO].cfg.gyr.noise_perf = BMI2_POWER_OPT_MODE;
+    config[GYRO].cfg.gyr.noise_perf = BMI2_PERF_OPT_MODE;
 
     /* Enable/Disable the filter performance mode where averaging of samples
      * will be done based on above set bandwidth and ODR.
