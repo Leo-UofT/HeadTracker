@@ -1120,32 +1120,48 @@ void sensor_Thread()
 
 void gyroCalibrate()
 {
-  static float last_gyro_mag = 0;
-  static float last_acc_mag = 0;
+  static float last_gyro_x = 0, last_gyro_y = 0, last_gyro_z = 0;
+  static float last_acc_x = 0, last_acc_y = 0, last_acc_z = 0;
   static float filt_gyrx = 0;
   static float filt_gyry = 0;
   static float filt_gyrz = 0;
   static bool sent_gyro_cal_msg = false;
   static uint32_t filter_samples = 0;
-  static uint64_t lasttime = 0;
+  // static uint64_t lasttime = 0;
 
-  uint64_t time = micros64();
-  if (lasttime == 0)
-  { // Skip first run
-    lasttime = time;
-    return;
-  }
-  float deltatime = (float)(time - lasttime) / 1000000.0f;
-  if (deltatime == 0.0f)
-    return;
-  lasttime = time;
+  // uint64_t time = micros64();
+  // if (lasttime == 0)
+  // { // Skip first run
+  //   lasttime = time;
+  //   return;
+  // }
+  // float deltatime = (float)(time - lasttime) / 1000000.0f;
+  // if (deltatime == 0.0f)
+  //   return;
+  // lasttime = time;
 
-  float gyro_magnitude = sqrt(rgyrx * rgyrx + rgyry * rgyry + rgyrz * rgyrz);
-  float acc_magnitude = sqrt(raccx * raccx + raccy * raccy + raccz * raccz);
-  float gyro_dif = (gyro_magnitude - last_gyro_mag) / deltatime;
-  last_gyro_mag = gyro_magnitude;
-  float acc_dif = (acc_magnitude - last_acc_mag) / deltatime;
-  last_acc_mag = acc_magnitude;
+  // float gyro_magnitude = sqrt(rgyrx * rgyrx + rgyry * rgyry + rgyrz * rgyrz);
+  // float acc_magnitude = sqrt(raccx * raccx + raccy * raccy + raccz * raccz);
+  // float gyro_dif = (gyro_magnitude - last_gyro_mag) / deltatime;
+  // last_gyro_mag = gyro_magnitude;
+  // float acc_dif = (acc_magnitude - last_acc_mag) / deltatime;
+  // last_acc_mag = acc_magnitude;
+
+  float gyro_off_x = last_gyro_x - rgyrx;
+  float gyro_off_y = last_gyro_x - rgyrx;
+  float gyro_off_z = last_gyro_x - rgyrx;
+  float gyro_dif = sqrt((gyro_off_x * gyro_off_x + gyro_off_y * gyro_off_y + gyro_off_z * gyro_off_z) / 3);
+  last_gyro_x = rgyrx;
+  last_gyro_y = rgyry;
+  last_gyro_z = rgyrz;
+
+  float acc_off_x = last_acc_x - raccx;
+  float acc_off_y = last_acc_x - raccy;
+  float acc_off_z = last_acc_x - raccz;
+  float acc_dif = sqrt((acc_off_x * acc_off_x + acc_off_y * acc_off_y + acc_off_z * acc_off_z) / 3);
+  last_acc_x = raccx;
+  last_acc_y = raccy;
+  last_acc_z = raccz;
 
   // Is Gyro anc Accelerometer stable?
   if (fabs(gyro_dif) < GYRO_STABLE_DIFF && fabs(acc_dif) < ACC_STABLE_DIFF)
