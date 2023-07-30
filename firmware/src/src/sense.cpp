@@ -1127,7 +1127,7 @@ void gyroCalibrate()
   static float filt_gyrz = 0;
   static bool sent_gyro_cal_msg = false;
   static uint32_t filter_samples = 0;
-  // static uint64_t lasttime = 0;
+  static uint64_t lasttime = 0;
 
   uint64_t time = micros64();
   if (lasttime == 0)
