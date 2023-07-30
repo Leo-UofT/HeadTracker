@@ -1148,17 +1148,17 @@ void gyroCalibrate()
   // last_acc_mag = acc_magnitude;
 
   float gyro_off_x = last_gyro_x - rgyrx;
-  float gyro_off_y = last_gyro_x - rgyrx;
-  float gyro_off_z = last_gyro_x - rgyrx;
-  float gyro_dif = sqrt((gyro_off_x * gyro_off_x + gyro_off_y * gyro_off_y + gyro_off_z * gyro_off_z) / 3);
+  float gyro_off_y = last_gyro_y - rgyry;
+  float gyro_off_z = last_gyro_z - rgyrz;
+  float gyro_dif = sqrt((gyro_off_x * gyro_off_x + gyro_off_y * gyro_off_y + gyro_off_z * gyro_off_z) / 3.0f);
   last_gyro_x = rgyrx;
   last_gyro_y = rgyry;
   last_gyro_z = rgyrz;
 
   float acc_off_x = last_acc_x - raccx;
-  float acc_off_y = last_acc_x - raccy;
-  float acc_off_z = last_acc_x - raccz;
-  float acc_dif = sqrt((acc_off_x * acc_off_x + acc_off_y * acc_off_y + acc_off_z * acc_off_z) / 3);
+  float acc_off_y = last_acc_y - raccy;
+  float acc_off_z = last_acc_z - raccz;
+  float acc_dif = sqrt((acc_off_x * acc_off_x + acc_off_y * acc_off_y + acc_off_z * acc_off_z) / 3.0f);
   last_acc_x = raccx;
   last_acc_y = raccy;
   last_acc_z = raccz;
