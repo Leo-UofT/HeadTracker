@@ -58,7 +58,7 @@
 #include "BMM150/bmm150_common.h"
 #endif
 
-//#define DEBUG_SENSOR_RATES
+// #define DEBUG_SENSOR_RATES
 
 void gyroCalibrate();
 
@@ -74,7 +74,7 @@ static float rolloffset = 0, panoffset = 0, tiltoffset = 0;
 static float magxoff = 0, magyoff = 0, magzoff = 0;
 static float accxoff = 0, accyoff = 0, acczoff = 0;
 static float gyrxoff = 0, gyryoff = 0, gyrzoff = 0;
-static bool trpOutputEnabled = false;  // Default to disabled T/R/P output
+static bool trpOutputEnabled = false; // Default to disabled T/R/P output
 static bool gyroCalibrated = false;
 
 // Input Channel Data
@@ -141,7 +141,8 @@ struct k_poll_event calculateRunEvents[1] = {
 int sense_Init()
 {
   const struct device *i2c_dev = device_get_binding("I2C_1");
-  if (!i2c_dev) {
+  if (!i2c_dev)
+  {
     LOGE("Could not get device binding for I2C");
     return false;
   }
@@ -149,7 +150,8 @@ int sense_Init()
   i2c_configure(i2c_dev, I2C_SPEED_SET(I2C_SPEED_FAST) | I2C_MODE_MASTER);
 
 #if defined(HAS_LSM9DS1)
-  if (!IMU.begin()) {
+  if (!IMU.begin())
+  {
     LOGE("Failed to initalize sensors");
     return -1;
   }
@@ -165,19 +167,22 @@ int sense_Init()
   rslt = bmi270_init(&bmi2_dev);
   bmi2_error_codes_print_result(rslt);
 
-  if (rslt == BMI2_OK) {
+  if (rslt == BMI2_OK)
+  {
     /* Accel and gyro configuration settings. */
     rslt = set_accel_gyro_config(&bmi2_dev);
     bmi2_error_codes_print_result(rslt);
 
-    if (rslt == BMI2_OK) {
+    if (rslt == BMI2_OK)
+    {
       /* NOTE:
        * Accel and Gyro enable must be done after setting configurations
        */
       rslt = bmi2_sensor_enable(sensor_list, 2, &bmi2_dev);
       bmi2_error_codes_print_result(rslt);
     }
-  } else
+  }
+  else
     return -1;
 
 #endif
@@ -188,11 +193,13 @@ int sense_Init()
 
   rbslt = bmm150_interface_selection(&bmm1_dev);
   bmm150_error_codes_print_result("bmm150_interface_selection", rbslt);
-  if (rbslt == BMM150_OK) {
+  if (rbslt == BMM150_OK)
+  {
     rbslt = bmm150_init(&bmm1_dev);
     bmm150_error_codes_print_result("bmm150_init", rbslt);
 
-    if (rbslt == BMM150_OK) {
+    if (rbslt == BMM150_OK)
+    {
       rbslt = set_config(&bmm1_dev);
       bmm150_error_codes_print_result("set_config", rbslt);
     }
@@ -213,9 +220,12 @@ int sense_Init()
 
 #if defined(HAS_APDS9960)
   // Initalize Gesture Sensor
-  if (!APDS.begin()) {
+  if (!APDS.begin())
+  {
     blesenseboard = false;
-  } else {
+  }
+  else
+  {
     blesenseboard = true;
   }
 #endif
@@ -224,12 +234,14 @@ int sense_Init()
   qmc5883Init();
 #endif
 
-  for (int i = 0; i < TrackerSettings::BT_CHANNELS; i++) {
+  for (int i = 0; i < TrackerSettings::BT_CHANNELS; i++)
+  {
     bt_chansf[i] = 0;
   }
 
   // Create analog filters
-  for (int i = 0; i < AN_CH_CNT; i++) {
+  for (int i = 0; i < AN_CH_CNT; i++)
+  {
     anFilter[i] = SF1eFilterCreate(AN_FILT_FREQ, AN_FILT_MINCO, AN_FILT_SLOPE, AN_FILT_DERCO);
     SF1eFilterInit(anFilter[i]);
   }
@@ -249,11 +261,13 @@ int sense_Init()
 
 void calculate_Thread()
 {
-  while (1) {
+  while (1)
+  {
     // Do not execute below until after initialization has happened
     k_poll(calculateRunEvents, 1, K_FOREVER);
 
-    if (pauseForFlash) {
+    if (pauseForFlash)
+    {
       rt_sleep_ms(10);
       continue;
     }
@@ -269,24 +283,30 @@ void calculate_Thread()
 
     // Toggles output on and off if long pressed
     bool butlngdwn = false;
-    if (wasButtonLongPressed()) {
+    if (wasButtonLongPressed())
+    {
       trpOutputEnabled = !trpOutputEnabled;
       butlngdwn = true;
     }
 
     static bool btbtnlngupdated = false;
-    if (BTGetMode() == BTPARARMT) {
-      if (butlngdwn && btbtnlngupdated == false) {
-        BTRmtSendButtonPress(true);  // Send the long press over bluetooth to remote board
+    if (BTGetMode() == BTPARARMT)
+    {
+      if (butlngdwn && btbtnlngupdated == false)
+      {
+        BTRmtSendButtonPress(true); // Send the long press over bluetooth to remote board
         btbtnlngupdated = true;
-      } else if (btbtnlngupdated == true) {
+      }
+      else if (btbtnlngupdated == true)
+      {
         btbtnlngupdated = false;
       }
     }
 
     // Zero button was pressed, adjust all values to zero
     bool butdnw = false;
-    if (wasButtonPressed()) {
+    if (wasButtonPressed())
+    {
       rolloffset = roll;
       panoffset = pan;
       tiltoffset = tilt;
@@ -295,11 +315,15 @@ void calculate_Thread()
 
     // If button was pressed and this is a remote bluetooth boart send the button press back
     static bool btbtnupdated = false;
-    if (BTGetMode() == BTPARARMT) {
-      if (butdnw && btbtnupdated == false) {
-        BTRmtSendButtonPress(false);  // Send the short press over bluetooth to remote board
+    if (BTGetMode() == BTPARARMT)
+    {
+      if (butdnw && btbtnupdated == false)
+      {
+        BTRmtSendButtonPress(false); // Send the short press over bluetooth to remote board
         btbtnupdated = true;
-      } else if (btbtnupdated == true) {
+      }
+      else if (btbtnupdated == true)
+      {
         btbtnupdated = false;
       }
     }
@@ -307,47 +331,57 @@ void calculate_Thread()
     // Tilt output
     float tiltout =
         (tilt - tiltoffset) * trkset.getTlt_Gain() * (trkset.isTiltReversed() ? -1.0 : 1.0);
-    uint16_t tiltout_ui = tiltout + trkset.getTlt_Cnt();  // Apply Center Offset
-    tiltout_ui = MAX(MIN(tiltout_ui, trkset.getTlt_Max()), trkset.getTlt_Min());  // Limit Output
+    uint16_t tiltout_ui = tiltout + trkset.getTlt_Cnt();                         // Apply Center Offset
+    tiltout_ui = MAX(MIN(tiltout_ui, trkset.getTlt_Max()), trkset.getTlt_Min()); // Limit Output
 
     // Roll output
     float rollout =
         (roll - rolloffset) * trkset.getRll_Gain() * (trkset.isRollReversed() ? -1.0 : 1.0);
-    uint16_t rollout_ui = rollout + trkset.getRll_Cnt();  // Apply Center Offset
-    rollout_ui = MAX(MIN(rollout_ui, trkset.getRll_Max()), trkset.getRll_Min());  // Limit Output
+    uint16_t rollout_ui = rollout + trkset.getRll_Cnt();                         // Apply Center Offset
+    rollout_ui = MAX(MIN(rollout_ui, trkset.getRll_Max()), trkset.getRll_Min()); // Limit Output
 
     // Pan output, Normalize to +/- 180 Degrees
     float panout = normalize((pan - panoffset), -180, 180) * trkset.getPan_Gain() *
                    (trkset.isPanReversed() ? -1.0 : 1.0);
-    uint16_t panout_ui = panout + trkset.getPan_Cnt();  // Apply Center Offset
-    panout_ui = MAX(MIN(panout_ui, trkset.getPan_Max()), trkset.getPan_Min());  // Limit Output
+    uint16_t panout_ui = panout + trkset.getPan_Cnt();                         // Apply Center Offset
+    panout_ui = MAX(MIN(panout_ui, trkset.getPan_Max()), trkset.getPan_Min()); // Limit Output
 
     // Reset on tilt
     static bool doresetontilt = false;
-    if (trkset.getRstOnTlt()) {
+    if (trkset.getRstOnTlt())
+    {
       static bool tiltpeak = false;
       static float resettime = 0.0f;
-      enum {
+      enum
+      {
         HITNONE,
         HITMIN,
         HITMAX,
       };
       static int minmax = HITNONE;
-      if (rollout_ui == trkset.getRll_Max()) {
-        if (tiltpeak == false && minmax == HITNONE) {
+      if (rollout_ui == trkset.getRll_Max())
+      {
+        if (tiltpeak == false && minmax == HITNONE)
+        {
           tiltpeak = true;
           minmax = HITMAX;
-        } else if (minmax == HITMIN) {
+        }
+        else if (minmax == HITMIN)
+        {
           minmax = HITNONE;
           tiltpeak = false;
           doresetontilt = true;
         }
-
-      } else if (rollout_ui == trkset.getRll_Min()) {
-        if (tiltpeak == false && minmax == HITNONE) {
+      }
+      else if (rollout_ui == trkset.getRll_Min())
+      {
+        if (tiltpeak == false && minmax == HITNONE)
+        {
           tiltpeak = true;
           minmax = HITMIN;
-        } else if (minmax == HITMAX) {
+        }
+        else if (minmax == HITMAX)
+        {
           minmax = HITNONE;
           tiltpeak = false;
           doresetontilt = true;
@@ -355,9 +389,11 @@ void calculate_Thread()
       }
 
       // If hit a max/min wait an amount of time and reset it
-      if (tiltpeak == true) {
+      if (tiltpeak == true)
+      {
         resettime += (float)CALCULATE_PERIOD / 1000000.0;
-        if (resettime > TrackerSettings::RESET_ON_TILT_TIME) {
+        if (resettime > TrackerSettings::RESET_ON_TILT_TIME)
+        {
           tiltpeak = false;
           minmax = HITNONE;
           resettime = 0;
@@ -367,8 +403,10 @@ void calculate_Thread()
 
     // Do the actual reset after a delay
     static float timetoreset = 0;
-    if (doresetontilt) {
-      if (timetoreset > TrackerSettings::RESET_ON_TILT_AFTER) {
+    if (doresetontilt)
+    {
+      if (timetoreset > TrackerSettings::RESET_ON_TILT_AFTER)
+      {
         doresetontilt = false;
         timetoreset = 0;
         pressButton();
@@ -401,15 +439,18 @@ void calculate_Thread()
      */
 
     // 1) Reset all Channels to zero which means they have no data
-    for (int i = 0; i < 16; i++) channel_data[i] = 0;
+    for (int i = 0; i < 16; i++)
+      channel_data[i] = 0;
 
     // 2) Read all PPM inputs
     PpmIn_execute();
     for (int i = 0; i < 16; i++)
-      ppm_in_chans[i] = 0;  // Reset all PPM in channels to Zero (Not active)
+      ppm_in_chans[i] = 0; // Reset all PPM in channels to Zero (Not active)
     int ppm_in_chcnt = PpmIn_getChannels(ppm_in_chans);
-    if (ppm_in_chcnt >= 4 && ppm_in_chcnt <= 16) {
-      for (int i = 0; i < MIN(ppm_in_chcnt, 16); i++) {
+    if (ppm_in_chcnt >= 4 && ppm_in_chcnt <= 16)
+    {
+      for (int i = 0; i < MIN(ppm_in_chcnt, 16); i++)
+      {
         channel_data[i] = ppm_in_chans[i];
       }
     }
@@ -418,18 +459,24 @@ void calculate_Thread()
     bool isUartValid = UartGetChannels(uart_in_chans);
     static bool lostmsgsent = false;
     static bool recmsgsent = false;
-    if (!isUartValid) {
-      if (!lostmsgsent) {
+    if (!isUartValid)
+    {
+      if (!lostmsgsent)
+      {
         LOGE("Uart(SBUS/CRSF) Data Lost");
         lostmsgsent = true;
       }
       recmsgsent = false;
       // SBUS data still valid, set the channel values to the last SBUS
-    } else {
-      for (int i = 0; i < 16; i++) {
+    }
+    else
+    {
+      for (int i = 0; i < 16; i++)
+      {
         channel_data[i] = uart_in_chans[i];
       }
-      if (!recmsgsent) {
+      if (!recmsgsent)
+      {
         LOGD("Uart(SBUS/CRSF) Data Received");
         recmsgsent = true;
       }
@@ -444,10 +491,12 @@ void calculate_Thread()
     // inputs 1-8 will be overridden
 
     for (int i = 0; i < TrackerSettings::BT_CHANNELS; i++)
-      bt_chans[i] = 0;  // Reset all BT in channels to Zero (Not active)
-    for (int i = 0; i < TrackerSettings::BT_CHANNELS; i++) {
+      bt_chans[i] = 0; // Reset all BT in channels to Zero (Not active)
+    for (int i = 0; i < TrackerSettings::BT_CHANNELS; i++)
+    {
       uint16_t btvalue = BTGetChannel(i);
-      if (btvalue > 0) {
+      if (btvalue > 0)
+      {
         bt_chans[i] = btvalue;
         channel_data[i] = btvalue;
       }
@@ -465,22 +514,28 @@ void calculate_Thread()
         } else if (channel_data[rstppmch] < 1700 && hasrstppm == true) {
             hasrstppm = false;
         }
-    }*/ //REMOVED as of V2.1
+    }*/
+    // REMOVED as of V2.1
 
     // 6) Set Auxiliary Functions
     int aux0ch = trkset.getAux0Ch();
     int aux1ch = trkset.getAux1Ch();
     int aux2ch = trkset.getAux2Ch();
-    if (aux0ch > 0 || aux1ch > 0 || aux2ch > 0) {
+    if (aux0ch > 0 || aux1ch > 0 || aux2ch > 0)
+    {
       buildAuxData();
-      if (aux0ch > 0) channel_data[aux0ch - 1] = auxdata[trkset.getAux0Func()];
-      if (aux1ch > 0) channel_data[aux1ch - 1] = auxdata[trkset.getAux1Func()];
-      if (aux2ch > 0) channel_data[aux2ch - 1] = auxdata[trkset.getAux2Func()];
+      if (aux0ch > 0)
+        channel_data[aux0ch - 1] = auxdata[trkset.getAux0Func()];
+      if (aux1ch > 0)
+        channel_data[aux1ch - 1] = auxdata[trkset.getAux1Func()];
+      if (aux2ch > 0)
+        channel_data[aux2ch - 1] = auxdata[trkset.getAux2Func()];
     }
 
     // 7) Set Analog Channels
 #ifdef AN0
-    if (trkset.getAn0Ch() > 0) {
+    if (trkset.getAn0Ch() > 0)
+    {
       float an4 = SF1eFilterDo(anFilter[0], analogRead(AN0));
       an4 *= trkset.getAn0Gain();
       an4 += trkset.getAn0Off();
@@ -490,7 +545,8 @@ void calculate_Thread()
     }
 #endif
 #ifdef AN1
-    if (trkset.getAn1Ch() > 0) {
+    if (trkset.getAn1Ch() > 0)
+    {
       float an5 = SF1eFilterDo(anFilter[1], analogRead(AN1));
       an5 *= trkset.getAn1Gain();
       an5 += trkset.getAn1Off();
@@ -500,7 +556,8 @@ void calculate_Thread()
     }
 #endif
 #ifdef AN2
-    if (trkset.getAn2Ch() > 0) {
+    if (trkset.getAn2Ch() > 0)
+    {
       float an6 = SF1eFilterDo(anFilter[2], analogRead(AN2));
       an6 *= trkset.getAn2Gain();
       an6 += trkset.getAn2Off();
@@ -510,7 +567,8 @@ void calculate_Thread()
     }
 #endif
 #ifdef AN3
-    if (trkset.getAn3Ch() > 0) {
+    if (trkset.getAn3Ch() > 0)
+    {
       float an7 = SF1eFilterDo(anFilter[3], analogRead(AN3));
       an7 *= trkset.getAn3Gain();
       an7 += trkset.getAn3Off();
@@ -524,17 +582,21 @@ void calculate_Thread()
     static float pulsetimer = 0;
     static bool sendingresetpulse = false;
     int alertch = trkset.getAlertCh();
-    if (alertch > 0) {
+    if (alertch > 0)
+    {
       // Synthesize a pulse indicating reset center started
       channel_data[alertch - 1] = TrackerSettings::MIN_PWM;
-      if (butdnw) {
+      if (butdnw)
+      {
         sendingresetpulse = true;
         pulsetimer = 0;
       }
-      if (sendingresetpulse) {
+      if (sendingresetpulse)
+      {
         channel_data[alertch - 1] = TrackerSettings::MAX_PWM;
         pulsetimer += (float)CALCULATE_PERIOD / 1000000.0;
-        if (pulsetimer > TrackerSettings::RECENTER_PULSE_DURATION) {
+        if (pulsetimer > TrackerSettings::RECENTER_PULSE_DURATION)
+        {
           sendingresetpulse = false;
         }
       }
@@ -546,10 +608,12 @@ void calculate_Thread()
     //   always enable the T/R/P outputs
     static bool lastbutmode = false;
     bool buttonpresmode = trkset.getButLngPs();
-    if (buttonpresmode == false || trkset.getButtonPin() == 0) trpOutputEnabled = true;
+    if (buttonpresmode == false || trkset.getButtonPin() == 0)
+      trpOutputEnabled = true;
 
     // On user enabling the button press mode in the GUI default to TRP output off.
-    if (lastbutmode == false && buttonpresmode == true) {
+    if (lastbutmode == false && buttonpresmode == true)
+    {
       trpOutputEnabled = false;
     }
     lastbutmode = buttonpresmode;
@@ -566,28 +630,34 @@ void calculate_Thread()
 
     // If uart output set to CRSF_OUT, force channel 5 (AUX1/ARM) to high, will override all other
     // channels
-    if (trkset.getUartMode() == TrackerSettings::UART_MODE_CRSFOUT) {
-      if (trkset.getCh5Arm()) channel_data[4] = 2000;
+    if (trkset.getUartMode() == TrackerSettings::UART_MODE_CRSFOUT)
+    {
+      if (trkset.getCh5Arm())
+        channel_data[4] = 2000;
     }
 
     // 10) Set the PPM Outputs
     PpmOut_execute();
-    for (int i = 0; i < PpmOut_getChnCount(); i++) {
+    for (int i = 0; i < PpmOut_getChnCount(); i++)
+    {
       uint16_t ppmout = channel_data[i];
-      if (ppmout == 0) ppmout = TrackerSettings::PPM_CENTER;
+      if (ppmout == 0)
+        ppmout = TrackerSettings::PPM_CENTER;
       PpmOut_setChannel(i, ppmout);
     }
 
     // 11) Set all the BT Channels, send the zeros don't center
     bool bleconnected = BTGetConnected();
     trkset.setDataBtAddr(BTGetAddress());
-    for (int i = 0; i < TrackerSettings::BT_CHANNELS; i++) {
+    for (int i = 0; i < TrackerSettings::BT_CHANNELS; i++)
+    {
       BTSetChannel(i, channel_data[i]);
     }
 
     // 12) Set all UART output channels, if disabled(0) set to center
     uint16_t uart_data[16];
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++)
+    {
       if (channel_data[i] == 0)
         uart_data[i] = TrackerSettings::PPM_CENTER;
       else
@@ -597,18 +667,22 @@ void calculate_Thread()
 
     // 13) Set PWM Channels
     int8_t pwmchs[4] = {trkset.getPwm0(), trkset.getPwm1(), trkset.getPwm2(), trkset.getPwm3()};
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++)
+    {
       int pwmch = pwmchs[i] - 1;
-      if (pwmch >= 0 && pwmch < 16) {
+      if (pwmch >= 0 && pwmch < 16)
+      {
         uint16_t pwmout = channel_data[pwmch];
-        if (pwmout == 0) pwmout = TrackerSettings::PPM_CENTER;
+        if (pwmout == 0)
+          pwmout = TrackerSettings::PPM_CENTER;
         setPWMValue(i, pwmout);
       }
     }
 
     // 14 Set USB Joystick Channels, Only 8 channels
     static int joycnt = 0;
-    if (joycnt++ == 1) {
+    if (joycnt++ == 1)
+    {
       set_JoystickChannels(channel_data);
       joycnt = 0;
     }
@@ -616,7 +690,8 @@ void calculate_Thread()
     // Update the settings for the GUI
     // Serial also uses this data, make sure writes are complete.
     //  If data thread has it locked just skip this reading
-    if (k_mutex_lock(&data_mutex, K_NO_WAIT) == 0) {
+    if (k_mutex_lock(&data_mutex, K_NO_WAIT) == 0)
+    {
       // Raw values for calibration
       trkset.setDataAccX(raccx);
       trkset.setDataAccY(raccy);
@@ -675,17 +750,21 @@ void calculate_Thread()
     // Adjust sleep for a more accurate period
     usduration = micros64() - usduration;
     if (CALCULATE_PERIOD - usduration <
-        CALCULATE_PERIOD * 0.7) {  // Took a long time. Will crash if sleep is too short
+        CALCULATE_PERIOD * 0.7)
+    { // Took a long time. Will crash if sleep is too short
 
       rt_sleep_us(CALCULATE_PERIOD);
-    } else {
+    }
+    else
+    {
       rt_sleep_us(CALCULATE_PERIOD - usduration);
     }
 
 #if defined(DEBUG_SENSOR_RATES)
     static int mcount = 0;
     static int64_t mmic = millis64() + 1000;
-    if (mmic < millis64()) {  // Every Second
+    if (mmic < millis64())
+    { // Every Second
       mmic = millis64() + 1000;
       LOGI("Calc Rate = %d", mcount);
       mcount = 0;
@@ -701,11 +780,15 @@ void calculate_Thread()
 
 void sensor_Thread()
 {
-  while (1) {
+  // Run Gyro Calibration
+  gyroCalibrate();
+  while (1)
+  {
     // Do not execute below until after initialization has happened
     k_poll(senseRunEvents, 1, K_FOREVER);
 
-    if (pauseForFlash) {
+    if (pauseForFlash)
+    {
       rt_sleep_ms(10);
       continue;
     }
@@ -715,13 +798,16 @@ void sensor_Thread()
 #if defined(HAS_APDS9960)
     // Reset Center on Proximity, Don't need to update this often
     static int sensecount = 0;
-    static int minproximity = 100;  // Keeps smallest proximity read.
-    static int maxproximity = 0;    // Keeps largest proximity value read.
-    if (blesenseboard && sensecount++ == 10) {
+    static int minproximity = 100; // Keeps smallest proximity read.
+    static int maxproximity = 0;   // Keeps largest proximity value read.
+    if (blesenseboard && sensecount++ == 10)
+    {
       sensecount = 0;
-      if (trkset.getRstOnWave()) {
+      if (trkset.getRstOnWave())
+      {
         // Reset on Proximity
-        if (APDS.proximityAvailable()) {
+        if (APDS.proximityAvailable())
+        {
           int proximity = APDS.readProximity();
 
           LOGT("Prox=%d", proximity);
@@ -733,12 +819,16 @@ void sensor_Thread()
           int highthreshold = maxproximity - APDS_HYSTERISIS;
 
           // Don't allow reset if high and low thresholds are too close
-          if (highthreshold - lowthreshold > APDS_HYSTERISIS * 2) {
-            if (proximity < lowthreshold && lastproximity == false) {
+          if (highthreshold - lowthreshold > APDS_HYSTERISIS * 2)
+          {
+            if (proximity < lowthreshold && lastproximity == false)
+            {
               pressButton();
               LOGI("Reset center from a close proximity");
               lastproximity = true;
-            } else if (proximity > highthreshold) {
+            }
+            else if (proximity > highthreshold)
+            {
               // Clear flag on proximity clear
               lastproximity = false;
             }
@@ -758,18 +848,21 @@ void sensor_Thread()
     bool magValid = false;
 
 #if defined(HAS_LSM9DS1)
-    if (IMU.accelerationAvailable()) {
+    if (IMU.accelerationAvailable())
+    {
       IMU.readRawAccel(tacc[0], tacc[1], tacc[2]);
-      tacc[0] *= -1.0;  // Flip X
+      tacc[0] *= -1.0; // Flip X
       accValid = true;
     }
-    if (IMU.magneticFieldAvailable()) {
+    if (IMU.magneticFieldAvailable())
+    {
       IMU.readRawMagnet(tmag[0], tmag[1], tmag[2]);
       magValid = true;
     }
-    if (IMU.gyroscopeAvailable()) {
+    if (IMU.gyroscopeAvailable())
+    {
       IMU.readRawGyro(tgyr[0], tgyr[1], tgyr[2]);
-      tgyr[0] *= -1.0;  // Flip X to match other sensors
+      tgyr[0] *= -1.0; // Flip X to match other sensors
       gyrValid = true;
     }
 #endif
@@ -781,7 +874,8 @@ void sensor_Thread()
     rslt = bmi2_get_int_status(&int_status, &bmi2_dev);
     bmi2_error_codes_print_result(rslt);
     /* To check the data ready interrupt status and print the status for 10 samples. */
-    if ((int_status & BMI2_ACC_DRDY_INT_MASK) && (int_status & BMI2_GYR_DRDY_INT_MASK)) {
+    if ((int_status & BMI2_ACC_DRDY_INT_MASK) && (int_status & BMI2_GYR_DRDY_INT_MASK))
+    {
       /* Get accel and gyro data for x, y and z axis. */
       rslt = bmi2_get_sensor_data(&sensor_data, &bmi2_dev);
       bmi2_error_codes_print_result(rslt);
@@ -815,7 +909,8 @@ void sensor_Thread()
 #endif
 
 #if defined(HAS_QMC5883)
-    if (qmc5883Read(tmag)) {
+    if (qmc5883Read(tmag))
+    {
       magValid = true;
     }
 #endif
@@ -825,14 +920,16 @@ void sensor_Thread()
     short _gyro[3];
     short _accel[3];
     unsigned long timestamp;
-    if (!mpu_get_accel_reg(_accel, &timestamp)) accValid = true;
+    if (!mpu_get_accel_reg(_accel, &timestamp))
+      accValid = true;
     unsigned short ascale = 1;
     ;
     mpu_get_accel_sens(&ascale);
     tacc[0] = (float)_accel[0] / (float)ascale;
     tacc[1] = (float)_accel[1] / (float)ascale;
     tacc[2] = (float)_accel[2] / (float)ascale;
-    if (!mpu_get_gyro_reg(_gyro, &timestamp)) gyrValid = true;
+    if (!mpu_get_gyro_reg(_gyro, &timestamp))
+      gyrValid = true;
     float gscale = 1.0f;
     mpu_get_gyro_sens(&gscale);
     tgyr[0] = _gyro[0] / gscale;
@@ -843,7 +940,8 @@ void sensor_Thread()
     k_mutex_lock(&sensor_mutex, K_FOREVER);
 
     // -- Accelerometer
-    if (accValid) {
+    if (accValid)
+    {
       raccx = tacc[0];
       raccy = tacc[1];
       raccz = tacc[2];
@@ -867,7 +965,8 @@ void sensor_Thread()
     }
 
     // --- Gyrometer Calcs
-    if (gyrValid) {
+    if (gyrValid)
+    {
       rgyrx = tgyr[0];
       rgyry = tgyr[1];
       rgyrz = tgyr[2];
@@ -887,8 +986,10 @@ void sensor_Thread()
       gyrz = tmpgyr[2];
     }
 
-    if(!trkset.getDisMag()) {
-      if (magValid) {
+    if (!trkset.getDisMag())
+    {
+      if (magValid)
+      {
         // --- Magnetometer Calcs
         rmagx = tmag[0];
         rmagy = tmag[1];
@@ -918,19 +1019,21 @@ void sensor_Thread()
         // For inital orientation setup
         madgsensbits |= MADGINIT_MAG;
       }
-    } else {
-        magx = 0;
-        magy = 0;
-        magz = 0;
-        madgsensbits |= MADGINIT_MAG;
-      }
+    }
+    else
+    {
+      magx = 0;
+      magy = 0;
+      magz = 0;
+      madgsensbits |= MADGINIT_MAG;
+    }
 
-    // Run Gyro Calibration
-    gyroCalibrate();
 
     // Only do this update after the first mag and accel data have been read.
-    if (madgreads == 0) {
-      if (madgsensbits == MADGINIT_READY) {
+    if (madgreads == 0)
+    {
+      if (madgsensbits == MADGINIT_READY)
+      {
         madgsensbits = 0;
         madgreads++;
         aacc[0] = accx;
@@ -942,8 +1045,11 @@ void sensor_Thread()
       }
 
       // Average samples
-    } else if (madgreads < MADGSTART_SAMPLES - 1) {
-      if (madgsensbits == MADGINIT_READY) {
+    }
+    else if (madgreads < MADGSTART_SAMPLES - 1)
+    {
+      if (madgsensbits == MADGINIT_READY)
+      {
         madgsensbits = 0;
         madgreads++;
         aacc[0] += accx;
@@ -961,18 +1067,22 @@ void sensor_Thread()
       }
 
       // Got the averaged values, apply the initial orientation.
-    } else if (madgreads == MADGSTART_SAMPLES - 1) {
+    }
+    else if (madgreads == MADGSTART_SAMPLES - 1)
+    {
       // Pass it averaged values
       madgwick.begin(aacc[0], aacc[1], aacc[2], amag[0], amag[1], amag[2]);
       madgreads = MADGSTART_SAMPLES;
     }
 
     // Do the AHRS calculations
-    if (madgreads == MADGSTART_SAMPLES) {
+    if (madgreads == MADGSTART_SAMPLES)
+    {
       // Period Between Samples
       madgwick.update(gyrx * DEG_TO_RAD, gyry * DEG_TO_RAD, gyrz * DEG_TO_RAD, accx, accy, accz,
                       magx, magy, magz, madgwick.deltatUpdate());
-      if (firstrun && pan != 0) {
+      if (firstrun && pan != 0)
+      {
         panoffset = pan;
         firstrun = false;
       }
@@ -983,24 +1093,29 @@ void sensor_Thread()
     // Adjust sleep for a more accurate period
     senseUsDuration = micros64() - senseUsDuration;
     if (SENSOR_PERIOD - senseUsDuration <
-        SENSOR_PERIOD * 0.7) {  // Took a long time. Will crash if sleep is too short
+        SENSOR_PERIOD * 0.7)
+    { // Took a long time. Will crash if sleep is too short
 
       rt_sleep_us(SENSOR_PERIOD);
-    } else {
+    }
+    else
+    {
       rt_sleep_us(SENSOR_PERIOD - senseUsDuration);
     }
 
 #if defined(DEBUG_SENSOR_RATES)
     static int mcount = 0;
     static int64_t mmic = millis64() + 1000;
-    if (mmic < millis64()) {  // Every Second
+    if (mmic < millis64())
+    { // Every Second
       mmic = millis64() + 1000;
       LOGI("Sense Rate = %d", mcount);
       mcount = 0;
     }
-    if (accValid) mcount++;
+    if (accValid)
+      mcount++;
 #endif
-  }  // END THREAD
+  } // END THREAD
 }
 
 void gyroCalibrate()
@@ -1015,12 +1130,14 @@ void gyroCalibrate()
   static uint64_t lasttime = 0;
 
   uint64_t time = micros64();
-  if (lasttime == 0) {  // Skip first run
+  if (lasttime == 0)
+  { // Skip first run
     lasttime = time;
     return;
   }
   float deltatime = (float)(time - lasttime) / 1000000.0f;
-  if (deltatime == 0.0f) return;
+  if (deltatime == 0.0f)
+    return;
   lasttime = time;
 
   float gyro_magnitude = sqrt(rgyrx * rgyrx + rgyry * rgyry + rgyrz * rgyrz);
@@ -1031,20 +1148,26 @@ void gyroCalibrate()
   last_acc_mag = acc_magnitude;
 
   // Is Gyro anc Accelerometer stable?
-  if (fabs(gyro_dif) < GYRO_STABLE_DIFF && fabs(acc_dif) < ACC_STABLE_DIFF) {
+  if (fabs(gyro_dif) < GYRO_STABLE_DIFF && fabs(acc_dif) < ACC_STABLE_DIFF)
+  {
     // First run, preload filter
-    if (filter_samples == 0) {
+    if (filter_samples == 0)
+    {
       filt_gyrx = rgyrx;
       filt_gyry = rgyry;
       filt_gyrz = rgyrz;
       sent_gyro_cal_msg = false;
       filter_samples++;
-    } else if (filter_samples < GYRO_STABLE_SAMPLES) {
+    }
+    else if (filter_samples < GYRO_STABLE_SAMPLES)
+    {
       filt_gyrx = ((1.0f - GYRO_SAMPLE_WEIGHT) * filt_gyrx) + (GYRO_SAMPLE_WEIGHT * rgyrx);
       filt_gyry = ((1.0f - GYRO_SAMPLE_WEIGHT) * filt_gyry) + (GYRO_SAMPLE_WEIGHT * rgyry);
       filt_gyrz = ((1.0f - GYRO_SAMPLE_WEIGHT) * filt_gyrz) + (GYRO_SAMPLE_WEIGHT * rgyrz);
       filter_samples++;
-    } else if (filter_samples == GYRO_STABLE_SAMPLES) {
+    }
+    else if (filter_samples == GYRO_STABLE_SAMPLES)
+    {
       gyroCalibrated = true;
       clearLEDFlag(LED_GYROCAL);
       // Set the new Gyro Offset Values
@@ -1055,10 +1178,12 @@ void gyroCalibrate()
       k_mutex_unlock(&data_mutex);
 
       // Check if they differ from the flash values and save if out of range
-      if(fabs(gyrxoff - filt_gyrx) > GYRO_FLASH_IF_OFFSET ||
-         fabs(gyryoff - filt_gyry) > GYRO_FLASH_IF_OFFSET ||
-         fabs(gyrzoff - filt_gyrz) > GYRO_FLASH_IF_OFFSET) {
-        if (!sent_gyro_cal_msg) {
+      if (fabs(gyrxoff - filt_gyrx) > GYRO_FLASH_IF_OFFSET ||
+          fabs(gyryoff - filt_gyry) > GYRO_FLASH_IF_OFFSET ||
+          fabs(gyrzoff - filt_gyrz) > GYRO_FLASH_IF_OFFSET)
+      {
+        if (!sent_gyro_cal_msg)
+        {
           k_sem_give(&saveToFlash_sem);
           LOGW("Gyro calibration differs from saved value. Updating flash, x=%.3f,y=%.3f,z=%.3f", filt_gyrx, filt_gyry, filt_gyrz);
           sent_gyro_cal_msg = true;
@@ -1066,7 +1191,9 @@ void gyroCalibrate()
       }
       filter_samples++;
     }
-  } else {
+  }
+  else
+  {
     filter_samples = 0;
   }
 
@@ -1079,8 +1206,8 @@ void gyroCalibrate()
 // by assuming the range wraps around when going below min or above max
 float normalize(const float value, const float start, const float end)
 {
-  const float width = end - start;          //
-  const float offsetValue = value - start;  // value relative to 0
+  const float width = end - start;         //
+  const float offsetValue = value - start; // value relative to 0
 
   return (offsetValue - (floor(offsetValue / width) * width)) + start;
   // + start to reset back to start of original range
@@ -1101,7 +1228,8 @@ void rotate(float pn[3], const float rotation[3])
   float out[3];
 
   // X Rotation
-  if (rotation[0] != 0) {
+  if (rotation[0] != 0)
+  {
     out[0] = pn[0] * 1 + pn[1] * 0 + pn[2] * 0;
     out[1] = pn[0] * 0 + pn[1] * cos(rot[0]) - pn[2] * sin(rot[0]);
     out[2] = pn[0] * 0 + pn[1] * sin(rot[0]) + pn[2] * cos(rot[0]);
@@ -1109,7 +1237,8 @@ void rotate(float pn[3], const float rotation[3])
   }
 
   // Y Rotation
-  if (rotation[1] != 0) {
+  if (rotation[1] != 0)
+  {
     out[0] = pn[0] * cos(rot[1]) - pn[1] * 0 + pn[2] * sin(rot[1]);
     out[1] = pn[0] * 0 + pn[1] * 1 + pn[2] * 0;
     out[2] = -pn[0] * sin(rot[1]) + pn[1] * 0 + pn[2] * cos(rot[1]);
@@ -1117,7 +1246,8 @@ void rotate(float pn[3], const float rotation[3])
   }
 
   // Z Rotation
-  if (rotation[2] != 0) {
+  if (rotation[2] != 0)
+  {
     out[0] = pn[0] * cos(rot[2]) - pn[1] * sin(rot[2]) + pn[2] * 0;
     out[1] = pn[0] * sin(rot[2]) + pn[1] * cos(rot[2]) + pn[2] * 0;
     out[2] = pn[0] * 0 + pn[1] * 0 + pn[2] * 1;
