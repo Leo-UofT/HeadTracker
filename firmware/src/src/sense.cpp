@@ -793,9 +793,9 @@ void sensor_Thread()
       // printk("\nAccX=%4.2f,Y=%4.2f,Z=%4.2f\n", tacc[0], tacc[1], tacc[2]);
       /* Converting lsb to degree per second for 16 bit gyro at 2000dps range. */
 
-      tgyr[0] = lsb_to_dps(sensor_data.gyr.y, 2000, bmi2_dev.resolution);
-      tgyr[1] = -1.0f * lsb_to_dps(sensor_data.gyr.x, 2000, bmi2_dev.resolution);
-      tgyr[2] = lsb_to_dps(sensor_data.gyr.z, 2000, bmi2_dev.resolution);
+      tgyr[0] = lsb_to_dps(sensor_data.gyr.y, 500, bmi2_dev.resolution);
+      tgyr[1] = -1.0f * lsb_to_dps(sensor_data.gyr.x, 500, bmi2_dev.resolution);
+      tgyr[2] = lsb_to_dps(sensor_data.gyr.z, 500, bmi2_dev.resolution);
       // printk("GyrX=%4.2f,Y=%4.2f,Z=%4.2f\n", tgyr[0], tgyr[1], tgyr[2]);
       accValid = true;
       gyrValid = true;
