@@ -780,8 +780,6 @@ void calculate_Thread()
 
 void sensor_Thread()
 {
-  // Run Gyro Calibration
-  gyroCalibrate();
   while (1)
   {
     // Do not execute below until after initialization has happened
@@ -1028,6 +1026,8 @@ void sensor_Thread()
       madgsensbits |= MADGINIT_MAG;
     }
 
+    // Run Gyro Calibration
+    gyroCalibrate();
 
     // Only do this update after the first mag and accel data have been read.
     if (madgreads == 0)
