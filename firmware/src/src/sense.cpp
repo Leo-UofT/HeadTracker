@@ -1129,16 +1129,16 @@ void gyroCalibrate()
   static uint32_t filter_samples = 0;
   // static uint64_t lasttime = 0;
 
-  // uint64_t time = micros64();
-  // if (lasttime == 0)
-  // { // Skip first run
-  //   lasttime = time;
-  //   return;
-  // }
-  // float deltatime = (float)(time - lasttime) / 1000000.0f;
-  // if (deltatime == 0.0f)
-  //   return;
-  // lasttime = time;
+  uint64_t time = micros64();
+  if (lasttime == 0)
+  { // Skip first run
+    lasttime = time;
+    return;
+  }
+  float deltatime = (float)(time - lasttime) / 1000000.0f;
+  if (deltatime == 0.0f)
+    return;
+  lasttime = time;
 
   // float gyro_magnitude = sqrt(rgyrx * rgyrx + rgyry * rgyry + rgyrz * rgyrz);
   // float acc_magnitude = sqrt(raccx * raccx + raccy * raccy + raccz * raccz);
@@ -1164,7 +1164,7 @@ void gyroCalibrate()
   last_acc_z = raccz;
 
   // Is Gyro anc Accelerometer stable?
-  if (fabs(gyro_dif) < GYRO_STABLE_DIFF && fabs(acc_dif) < ACC_STABLE_DIFF)
+  if (gyro_dif < GYRO_STABLE_DIFF && acc_dif < ACC_STABLE_DIFF)
   {
     // First run, preload filter
     if (filter_samples == 0)
